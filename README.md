@@ -1,4 +1,4 @@
-# 📋 Smart To-Do List (React & Context API)
+# 📋 Smart To-Do List (React & Context API) 
 
 ## Overview
 An interactive task management application built using ReactJS. This project is specifically designed to demonstrate the application of **Component-Based Architecture** principles and modern frontend structuring best practices.
