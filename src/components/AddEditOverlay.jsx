@@ -4,7 +4,7 @@ import { ModeContext } from "../contexts/ModeContext";
 import { TasksDataListContext } from "../contexts/TasksDataListContext";
 import { TaskContext } from "../contexts/TaskContext";
 import { useContext } from "react";
-import { useRef } from "react";
+// import { useRef } from "react";
 // import { useState } from "react";
 
 export default function AddEditOverlay() {
@@ -30,22 +30,20 @@ export default function AddEditOverlay() {
 	};
 
 	// counter for adding new task with unique id
-	let listId = useRef(0);
+	// let listId = useRef(0);
 
 	const addHandler = () => {
 		// if neither the title nor the description is empty
 		if (taskData.title && taskData.description) {
 			let newTask = {
 				...taskData,
-				id: listId.current,
+				id: crypto.randomUUID(),
 				progress: "unfinished",
 			};
 			setTaskData((prev) => {
 				return newTask;
 			});
 			tasksDataListDispatch((prev) => [...prev, newTask]);
-
-			listId.current++;
 		}
 
 		defaultModeHandler();
@@ -53,7 +51,7 @@ export default function AddEditOverlay() {
 
 	const editHandler = () => {
 		let [originalTaskData] = tasksDataList.filter(
-			(task) => task.id == taskData.id
+			(task) => task.id == taskData.id,
 		);
 
 		// if there is no change in the task, just ignore
@@ -73,8 +71,8 @@ export default function AddEditOverlay() {
 							description: taskData.description,
 							id: taskData.id,
 							progress: taskData.progress,
-					  }
-					: task
+						}
+					: task,
 			);
 
 			tasksDataListDispatch((prev) => [...newTasksDataList]);
