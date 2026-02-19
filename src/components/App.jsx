@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { ThemeProvider } from "@mui/material/styles";
 import "../cssFiles/App.css";
 import MainComponent from "./MainComponent";

@@ -1,15 +1,14 @@
 /* eslint-disable react/prop-types */
 import { createContext, useState } from "react";
 
-export let TypeContext = createContext("all");
+export const TypeContext = createContext({ type: "all", setType: () => {} });
 
+export function TypeProvider({ children }) {
+	const [type, setType] = useState("all");
 
-
-export function TypeProvider ({children}) {
-    
-    const [type, setType] = useState("all");
-
-    return (
-        <TypeContext.Provider value={{type, setType}} > {children} </TypeContext.Provider>
-    )
+	return (
+		<TypeContext.Provider value={{ type, setType }}>
+			{children}
+		</TypeContext.Provider>
+	);
 }

@@ -1,37 +1,35 @@
-/* eslint-disable no-unused-vars */
 import "../cssFiles/AddEditOverlay.css";
 import { ModeContext } from "../contexts/ModeContext";
 import { TasksDataListContext } from "../contexts/TasksDataListContext";
 import { TaskContext } from "../contexts/TaskContext";
 import { useContext } from "react";
-// import { useRef } from "react";
-// import { useState } from "react";
 
 export default function AddEditOverlay() {
 	let { mode, setMode } = useContext(ModeContext);
-	let { tasksDataList, tasksDataListDispatch } =
-		useContext(TasksDataListContext);
+	let { tasksDataList, setTasksDataList } = useContext(TasksDataListContext);
 	let { taskData, setTaskData } = useContext(TaskContext);
 
+	// setting the title of the overlay based on the mode
 	let title;
-	if (mode == "add") {
+	if (mode === "add") {
 		title = "إضافة مهمة";
-	} else if (mode == "edit") {
+	} else if (mode === "edit") {
 		title = "تعديل مهمة ";
 	}
 
+	// function for switching to default mode
 	const defaultModeHandler = () => {
 		setMode("default");
 	};
+
+	// function for switching to default mode when clicking outside the add/edit window
 	const defaultModeHandlerForOverlay = (e) => {
 		if (e.target.classList.contains("full-screen")) {
 			setMode("default");
 		}
 	};
 
-	// counter for adding new task with unique id
-	// let listId = useRef(0);
-
+	// function for adding a new task
 	const addHandler = () => {
 		// if neither the title nor the description is empty
 		if (taskData.title && taskData.description) {
@@ -40,50 +38,54 @@ export default function AddEditOverlay() {
 				id: crypto.randomUUID(),
 				progress: "unfinished",
 			};
-			setTaskData((prev) => {
-				return newTask;
-			});
-			tasksDataListDispatch((prev) => [...prev, newTask]);
+			setTasksDataList((prev) => [...prev, newTask]);
 		}
-
+		// if the title or the description is empty, just ignore
+		// In all cases switch to default mode
 		defaultModeHandler();
 	};
 
+	// function for editing an existing task
 	const editHandler = () => {
-		let [originalTaskData] = tasksDataList.filter(
-			(task) => task.id == taskData.id,
+		const originalTaskData = tasksDataList.find(
+			(task) => task.id === taskData.id,
 		);
+
+		if (!originalTaskData) {
+			defaultModeHandler();
+			return;
+		}
 
 		// if there is no change in the task, just ignore
 		if (
-			originalTaskData.title == taskData.title &&
-			originalTaskData.description == taskData.description
+			originalTaskData.title === taskData.title &&
+			originalTaskData.description === taskData.description
 		) {
 			defaultModeHandler();
+			return;
 		}
 
 		// if there is a change in the task, update
 		else {
-			let newTasksDataList = tasksDataList.map((task) =>
-				task.id == taskData.id
-					? {
-							title: taskData.title,
-							description: taskData.description,
-							id: taskData.id,
-							progress: taskData.progress,
-						}
-					: task,
+			setTasksDataList((prev) =>
+				prev.map((task) =>
+					task.id === taskData.id
+						? {
+								...task,
+								title: taskData.title,
+								description: taskData.description,
+							}
+						: task,
+				),
 			);
-
-			tasksDataListDispatch((prev) => [...newTasksDataList]);
 			defaultModeHandler();
 		}
 	};
 
 	const confirmButtonHandler = () => {
-		if (mode == "add") {
+		if (mode === "add") {
 			addHandler();
-		} else if (mode == "edit") {
+		} else if (mode === "edit") {
 			editHandler();
 		} else {
 			defaultModeHandler();
@@ -102,7 +104,7 @@ export default function AddEditOverlay() {
 		<div
 			className="full-screen"
 			style={
-				mode == "default" ? { display: "none" } : { display: "flex" }
+				mode === "default" ? { display: "none" } : { display: "flex" }
 			}
 			onClick={defaultModeHandlerForOverlay}
 		>

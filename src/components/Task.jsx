@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -10,33 +9,32 @@ import IconButton from "@mui/material/IconButton";
 import { ModeContext } from "../contexts/ModeContext";
 import { TaskContext } from "../contexts/TaskContext";
 import { TasksDataListContext } from "../contexts/TasksDataListContext";
-import { useContext, useReducer } from "react";
-// import { taskReducer } from "../contexts/TaskContext";
+import { useContext } from "react";
 
 export default function Task({ title, description, id, progress }) {
 	const theme = useTheme();
 	let { setMode } = useContext(ModeContext);
-	let { taskData, setTaskData } = useContext(TaskContext);
-	let { tasksDataList, tasksDataListDispatch } =
-    useContext(TasksDataListContext);
-  
-  // let { taskData2, taskDataDispatch } = useReducer(taskReducer);
+	let { setTaskData } = useContext(TaskContext);
+	let { tasksDataList, setTasksDataList } = useContext(TasksDataListContext);
 
 	const finishedButtonHandler = () => {
-		let newTasksDataList = tasksDataList.map((task) =>
-			{
-				if (task.id == id) {
-					if (task.progress == "unfinished") {
-						return { ...task, progress: "finished" };
-					} else if (task.progress == "finished") {
-						return { ...task, progress: "unfinished" };
-					}
-				} else {
+		setTasksDataList((prev) => {
+			return prev.map((task) => {
+				// if the task is not the one we want to change, just return it without any change
+				if (task.id !== id) {
 					return task;
+				} else {
+					// if the task is the one we want to change, toggle its progress
+					return {
+						...task,
+						progress:
+							task.progress === "unfinished"
+								? "finished"
+								: "unfinished",
+					};
 				}
-			}
-		);
-		tasksDataListDispatch((prev) => newTasksDataList);
+			});
+		});
 	};
 
 	const editModeSwitcher = () => {
@@ -50,9 +48,7 @@ export default function Task({ title, description, id, progress }) {
 	};
 
 	const deleteButtonHandler = () => {
-		tasksDataListDispatch((prev) =>
-			tasksDataList.filter((task) => task.id != id)
-		);
+		setTasksDataList((prev) => prev.filter((task) => task.id !== id));
 	};
 
 	return (

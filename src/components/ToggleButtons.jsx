@@ -1,45 +1,46 @@
-/* eslint-disable no-unused-vars */
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { useState, useContext } from "react";
-import { TypeContext } from '../contexts/TypeContext';
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import { useContext } from "react";
+import { TypeContext } from "../contexts/TypeContext";
+
+const mapTypeToValue = (type) => {
+	if (type === "unfinished") return "غير منجز";
+	if (type === "finished") return "منجز";
+	return "الكل";
+};
+
+const mapValueToType = (value) => {
+	if (value === "غير منجز") return "unfinished";
+	if (value === "منجز") return "finished";
+	return "all";
+};
 
 export default function ToggleButtons() {
-  
-  const [alignment, setAlignment] =useState('الكل');
-  const {type, setType} = useContext(TypeContext);
+	const { type, setType } = useContext(TypeContext);
 
-  const handleChange = (event, newAlignment) => {
-    if (newAlignment !== null) {
-      setAlignment(newAlignment);
-    };
-  }
+	const handleChange = (_, newValue) => {
+		if (newValue === null) return;
+		setType(mapValueToType(newValue));
+	};
 
-  const allTypeButtonHandler = () => {
-    setType("all");
-  }
+	return (
+		<ToggleButtonGroup
+			value={mapTypeToValue(type)}
+			onChange={handleChange}
+			exclusive
+			aria-label="TasksType"
+		>
+			<ToggleButton className="ToggleButton btn-effect" value="غير منجز">
+				غير منجز
+			</ToggleButton>
 
-  const finishedTypeButtonHandler = () => {
-    setType("finished");
-  }
-  
-  const unfinishedTypeButtonHandler = () => {
-    setType("unfinished");
-  }
+			<ToggleButton className="ToggleButton btn-effect" value="منجز">
+				منجز
+			</ToggleButton>
 
-  return (
-    <>
-        <ToggleButtonGroup
-      value={alignment}
-      onChange={handleChange}
-      exclusive
-      aria-label="TasksType"
-    >
-      <ToggleButton className='ToggleButton btn-effect' value="غير منجز" onClick = {unfinishedTypeButtonHandler}>غير منجز</ToggleButton>
-      <ToggleButton className='ToggleButton btn-effect' value="منجز" onClick = {finishedTypeButtonHandler}>منجز</ToggleButton>
-      <ToggleButton className='ToggleButton btn-effect' value="الكل" onClick ={allTypeButtonHandler}>الكل</ToggleButton>
-    </ToggleButtonGroup>
- 
-    </>
-)
-};
+			<ToggleButton className="ToggleButton btn-effect" value="الكل">
+				الكل
+			</ToggleButton>
+		</ToggleButtonGroup>
+	);
+}
